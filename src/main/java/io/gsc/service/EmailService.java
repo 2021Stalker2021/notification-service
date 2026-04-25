@@ -1,5 +1,6 @@
 package io.gsc.service;
 
+import io.gsc.model.constants.ApiConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,7 +19,7 @@ public class EmailService {
         message.setTo(email);
         message.setSubject(subject);
         message.setText(text);
-        message.setFrom("no-reply@yourwebsite.com");
+        message.setFrom(ApiConstants.EMAIL_FROM);
 
         mailSender.send(message);
         log.info("Email sent to {}: {}", email, subject);

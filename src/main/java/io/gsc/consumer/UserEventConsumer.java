@@ -1,7 +1,7 @@
 package io.gsc.consumer;
 
 import io.gsc.model.event.UserEvent;
-import io.gsc.service.EmailService;
+import io.gsc.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,19 +12,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserEventConsumer {
 
-    private final EmailService emailService;
+    private final NotificationService notificationService;
 
-    @KafkaListener(topics = "user-events", groupId = "notification-group")
+    @KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "notification-group")
     public void consume(UserEvent event) {
         log.info("Received event from Kafka: {}", event);
 
-        String email = event.getEmail();
-        if (event.getActionType() == UserEvent.ActionType.CREATE) {
-            emailService.sendNotification(email, "Добро пожаловать!",
-                    "Здравствуйте! Ваш аккаунт на сайте успешно создан.");
-        } else {
-            emailService.sendNotification(email, "Аккаунт удален",
-                    "Здравствуйте! Ваш аккаунт был удалён.");
-        }
+        notificationService.processUserEvent(event);
     }
 }
